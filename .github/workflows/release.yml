@@ -27,12 +27,26 @@ jobs:
         with:
           submodules: true
 
+      - name: Cache LLVM source code
+        uses: actions/cache@v2
+        id: cache_llvm
+        env:
+          cache-name: llvm_source
+        with:
+          path: ./llvm-project
+          key: ${{ runner.os }}-source-${{env.cache-name}}
+          restore-keys: ${{ runner.os }}-source-${{env.cache-name}}
+
       # Runs a single command using the runners shell
       - name: clone llvm repo
+        if: steps.cache_llvm.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/llvm/llvm-project.git
+          
+      - name: patch llvm
+        run:
           cd llvm-project
-          git reset --hard HEAD 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
+          git reset --hard 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
           git am ../deps/wamr_debug/build-scripts/lldb-wasm.patch
 
       # Runs a set of commands using the runners shell
