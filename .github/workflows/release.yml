@@ -42,28 +42,29 @@ jobs:
         if: steps.cache_llvm.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/llvm/llvm-project.git
+          ls deps/wamr_debug/build-scripts
           
-      - name: patch llvm
-        run: |
-          cd llvm-project
-          git reset --hard 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
-          git config user.email "action@github.com"
-          git config user.name "github action"
-          git am ../deps/wamr_debug/build-scripts/lldb-wasm.patch
+#       - name: patch llvm
+#         run: |
+#           cd llvm-project
+#           git reset --hard 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
+#           git config user.email "action@github.com"
+#           git config user.name "github action"
+#           git am ../deps/wamr_debug/build-scripts/lldb-wasm.patch
 
-      # Runs a set of commands using the runners shell
-      - name: build lldb
-        run: |
-          echo "start to build lldb"
-          mkdir build
-          mkdir inst
-          cd build
-          cmake -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_INSTALL_PREFIX=../inst ../llvm-project/llvm
-          make lldb -j8
-          make install
+#       # Runs a set of commands using the runners shell
+#       - name: build lldb
+#         run: |
+#           echo "start to build lldb"
+#           mkdir build
+#           mkdir inst
+#           cd build
+#           cmake -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_INSTALL_PREFIX=../inst ../llvm-project/llvm
+#           make lldb -j8
+#           make install
         
-      - name: publish release
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ format( 'lldb-{0}', matrix.os) }}
-          path: inst
+#       - name: publish release
+#         uses: actions/upload-artifact@v1
+#         with:
+#           name: ${{ format( 'lldb-{0}', matrix.os) }}
+#           path: inst
