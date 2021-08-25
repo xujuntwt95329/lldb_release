@@ -47,6 +47,8 @@ jobs:
         run: |
           cd llvm-project
           git reset --hard 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
+          git config user.email "action@github.com"
+          git config user.name "github action"
           git am ../deps/wamr_debug/build-scripts/lldb-wasm.patch
 
       # Runs a set of commands using the runners shell
