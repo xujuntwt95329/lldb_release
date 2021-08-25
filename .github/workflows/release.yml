@@ -53,13 +53,40 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: build lldb
+        if: always()
         run: |
           echo "start to build lldb"
-          mkdir build
+          mkdir -p build
           mkdir inst
           cd build
           cmake -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_INSTALL_PREFIX=../inst ../llvm-project/llvm
+          make lldb -j8
+      
+      # first build may fail, we run it again
+      - name: run build again
+        if: always()
+        run: |
+          cd build
+          make lldb -j4
+          
+      # first build may fail, we run it again
+      - name: run build again and again
+        if: always()
+        run: |
+          cd build
+          make lldb -j2
+          
+      # first build may fail, we run it again
+      - name: run build again and again and again
+        if: always()
+        run: |
+          cd build
           make lldb
+      
+      - name: install lldb
+        if: always()
+        run: |
+          cd build
           make install
           
       - name: Cache LLVM binary
@@ -72,8 +99,33 @@ jobs:
           key: ${{ runner.os }}-build-${{env.cache-name}}
           restore-keys: ${{ runner.os }}-build-${{env.cache-name}}
         
-      - name: publish release
+      - name: upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: ${{ format( 'lldb-{0}', matrix.os) }}
           path: inst
+          
+      - name: archive binary
+        run:
+          tar czvf lldb-${{ runner.os }}.tar.gz inst
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ format( 'lldb-{0}.tar.gz', github.ref) }}
+          draft: false
+          prerelease: true
+          
+      - name: Publish Release Attachment
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: lldb-${{ runner.os }}.tar.gz
+          asset_name: lldb-${{ runner.os }}.tar.gz
+          asset_content_type: application/gzip
