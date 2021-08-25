@@ -58,7 +58,7 @@ jobs:
           mkdir build
           mkdir inst
           cd build
-          cmake -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_INSTALL_PREFIX=../inst ../llvm
+          cmake -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_INSTALL_PREFIX=../inst ../llvm-project/llvm
           make lldb -j8
           make install
         
