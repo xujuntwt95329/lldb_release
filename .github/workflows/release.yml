@@ -106,28 +106,31 @@ jobs:
         if: always()
         run: |
           cd build
-          make install
+          make lldb install
           
       # install may also fail
       - name: install lldb again
         if: always()
         run: |
           cd build
-          make install
+          make lldb install
           
       # install may also fail
       - name: install lldb again and again
         if: always()
         run: |
           cd build
-          make install
-        
+          make lldb install
+
       # last try
       - name: install lldb last time
         if: always()
         run: |
           cd build
-          make install
+          make lldb install
+          
+      # @github: can you give me more memory ? 
+      # If you still kill my ld, I'll try over and over again
         
       - name: upload artifact
         uses: actions/upload-artifact@v1
