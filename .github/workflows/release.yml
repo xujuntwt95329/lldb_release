@@ -95,6 +95,13 @@ jobs:
           key: ${{ runner.os }}-build-${{env.cache-name}}
           restore-keys: ${{ runner.os }}-build-${{env.cache-name}}
       
+      - name: upload build folder to artifact
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ format( 'lldb-{0}-build', matrix.os) }}
+          path: build
+      
       - name: install lldb
         if: always()
         run: |
@@ -110,6 +117,13 @@ jobs:
           
       # install may also fail
       - name: install lldb again and again
+        if: always()
+        run: |
+          cd build
+          make install
+        
+      # last try
+      - name: install lldb last time
         if: always()
         run: |
           cd build
