@@ -16,9 +16,99 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+#   build_linux:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
+
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#       - uses: actions/checkout@v2
+#         with:
+#           submodules: true
+
+#       - name: Cache LLVM source code
+#         uses: actions/cache@v2
+#         id: cache_llvm
+#         env:
+#           cache-name: llvm_source
+#         with:
+#           path: ./llvm-project
+#           key: ${{ runner.os }}-source-${{env.cache-name}}
+#           restore-keys: ${{ runner.os }}-source-${{env.cache-name}}
+
+#       - name: clone llvm repo
+#         if: steps.cache_llvm.outputs.cache-hit != 'true'
+#         run: |
+#           git clone https://github.com/llvm/llvm-project.git
+#           ls deps/wamr_debug/build-scripts
+          
+#       - name: patch llvm
+#         run: |
+#           cd llvm-project
+#           git reset --hard 4a8e6ed2f795b78061b02899aed4642bdb9cdc7e
+#           git config user.email "action@github.com"
+#           git config user.name "github action"
+#           git apply ../deps/wamr_debug/build-scripts/lldb-wasm.patch
+
+#       # Runs a set of commands using the runners shell
+#       - name: build lldb
+#         if: always()
+#         run: |
+#           echo "start to build lldb"
+#           mkdir -p build
+#           mkdir -p inst
+#           cd build
+#           cmake -DCMAKE_INSTALL_PREFIX=../inst -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 ../llvm-project/llvm -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_BUILD_BENCHMARKS:BOOL=OFF -DLLVM_BUILD_DOCS:BOOL=OFF  -DLLVM_BUILD_EXAMPLES:BOOL=OFF  -DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF  -DLLVM_BUILD_TESTS:BOOL=OFF  -DLLVM_ENABLE_BINDINGS:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF  -DLLVM_INCLUDE_DOCS:BOOL=OFF  -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_TESTS:BOOL=OFF
+#           make lldb install -j $(nproc)
+
+#       # @github: can you give me more memory ? 
+#       # If you still kill my ld, I'll try over and over again
+      
+#       - name: make distribution file
+#         run: |
+#           mkdir -p inst/bin
+#           mkdir -p inst/lib
+#           cp build/bin/lldb* inst/bin
+#           cp build/lib/liblldb*.so inst/lib
+#           cp build/lib/liblldb*.so.* inst/lib
+#           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
+#           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
+        
+#       - name: upload artifact
+#         uses: actions/upload-artifact@v1
+#         with:
+#           name: ${{ format( 'lldb-{0}', matrix.os) }}
+#           path: inst
+          
+#       - name: archive binary
+#         run:
+#           tar czvf lldb-${{ runner.os }}.tar.gz inst
+      
+#       - name: Create Release
+#         id: create_release
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           tag_name: ${{ github.ref }}
+#           release_name: ${{ format( 'lldb-{0}.tar.gz', github.ref) }}
+#           draft: false
+#           prerelease: true
+          
+#       - name: Publish Release Attachment
+#         uses: actions/upload-release-asset@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: lldb-${{ runner.os }}.tar.gz
+#           asset_name: lldb-${{ runner.os }}.tar.gz
+#           asset_content_type: application/gzip
+
+  build_windows:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -60,7 +150,7 @@ jobs:
           mkdir -p inst
           cd build
           cmake -DCMAKE_INSTALL_PREFIX=../inst -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 ../llvm-project/llvm -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_BUILD_BENCHMARKS:BOOL=OFF -DLLVM_BUILD_DOCS:BOOL=OFF  -DLLVM_BUILD_EXAMPLES:BOOL=OFF  -DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF  -DLLVM_BUILD_TESTS:BOOL=OFF  -DLLVM_ENABLE_BINDINGS:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF  -DLLVM_INCLUDE_DOCS:BOOL=OFF  -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_TESTS:BOOL=OFF
-          make lldb install -j $(nproc)
+          make lldb -j $(nproc)
 
       # @github: can you give me more memory ? 
       # If you still kill my ld, I'll try over and over again
@@ -74,34 +164,14 @@ jobs:
           cp build/lib/liblldb*.so.* inst/lib
           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
-        
+          
+      - name: archive binary
+        run:
+          tar czvf lldb-${{ runner.os }}.tar.gz inst
+          
       - name: upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: ${{ format( 'lldb-{0}', matrix.os) }}
           path: inst
           
-      - name: archive binary
-        run:
-          tar czvf lldb-${{ runner.os }}.tar.gz inst
-      
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ format( 'lldb-{0}.tar.gz', github.ref) }}
-          draft: false
-          prerelease: true
-          
-      - name: Publish Release Attachment
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: lldb-${{ runner.os }}.tar.gz
-          asset_name: lldb-${{ runner.os }}.tar.gz
-          asset_content_type: application/gzip
