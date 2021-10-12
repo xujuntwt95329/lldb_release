@@ -1,7 +1,3 @@
-[submodule "deps/wamr_debug"]
-	path = deps/wamr_debug
-	url = https://github.com/ApsarasX/wasm-micro-runtime.git
-	branch = debugging
 [submodule "deps/llvm-project"]
 	path = deps/llvm-project
 	url = https://github.com/llvm/llvm-project.git
