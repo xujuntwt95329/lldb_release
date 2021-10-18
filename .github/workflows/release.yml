@@ -156,8 +156,7 @@ jobs:
           mkdir -p inst/bin
           mkdir -p inst/lib
           cp build/bin/lldb* inst/bin
-          cp build/lib/liblldb*.so inst/lib
-          cp build/lib/liblldb*.so.* inst/lib
+          cp build/lib/liblldb*. inst/lib
           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
           
