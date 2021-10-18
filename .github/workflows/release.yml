@@ -134,6 +134,7 @@ jobs:
           ls deps/wamr_debug/build-scripts
           
       - name: patch llvm
+        if: steps.cache_llvm.outputs.cache-hit != 'true'
         run: |
           cd llvm-project
           git config user.email "action@github.com"
