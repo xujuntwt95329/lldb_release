@@ -136,6 +136,7 @@ jobs:
           cd libxml2/win32
           cscript.exe .\configure.js prefix=..\..\libxml2_inst iconv=no
           echo "build libxml2"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           nmake /f Makefile.msvc
           echo "install libxml2"
           nmake /f Makefile.msvc install
