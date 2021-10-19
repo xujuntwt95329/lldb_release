@@ -149,24 +149,24 @@ jobs:
           echo "install libxml2"
           nmake /f Makefile.msvc install
 
-      - name: Cache LLVM source code
-        uses: actions/cache@v2
-        id: cache_llvm
-        env:
-          cache-name: llvm_source
-        with:
-          path: ./llvm-project
-          key: ${{ runner.os }}-source-${{env.cache-name}}
-          restore-keys: ${{ runner.os }}-source-${{env.cache-name}}
+#       - name: Cache LLVM source code
+#         uses: actions/cache@v2
+#         id: cache_llvm
+#         env:
+#           cache-name: llvm_source
+#         with:
+#           path: ./llvm-project
+#           key: ${{ runner.os }}-source-${{env.cache-name}}
+#           restore-keys: ${{ runner.os }}-source-${{env.cache-name}}
 
       - name: clone llvm repo
-        if: steps.cache_llvm.outputs.cache-hit != 'true'
+#         if: steps.cache_llvm.outputs.cache-hit != 'true'
         run: |
           git clone --branch release/13.x --depth=1 https://github.com/llvm/llvm-project.git
           ls deps/wamr_debug/build-scripts
           
       - name: patch llvm
-        if: steps.cache_llvm.outputs.cache-hit != 'true'
+#         if: steps.cache_llvm.outputs.cache-hit != 'true'
         run: |
           cd llvm-project
           git config user.email "action@github.com"
