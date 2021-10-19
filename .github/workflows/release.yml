@@ -127,7 +127,7 @@ jobs:
           key: ${{ runner.os }}-lib-${{env.cache-name}}
           restore-keys: ${{ runner.os }}-lib-${{env.cache-name}}
       
-      - name: Download and build libxml2
+      - name: Download libxml2
         if: steps.cache_libxml2.outputs.cache-hit != 'true'
         run: |
           echo "start to download libxml2"
@@ -135,8 +135,14 @@ jobs:
           echo "configure libxml2 with iconv disabled"
           cd libxml2/win32
           cscript.exe .\configure.js prefix=..\..\libxml2_inst iconv=no
+          
+      - name: Build libxml2
+        if: steps.cache_libxml2.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          cd libxml2/win32
           echo "build libxml2"
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           nmake /f Makefile.msvc
           echo "install libxml2"
           nmake /f Makefile.msvc install
