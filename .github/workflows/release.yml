@@ -191,7 +191,8 @@ jobs:
           mkdir -p inst/bin
           mkdir -p inst/lib
           cp build/Release/bin/lldb* inst/bin
-          cp build/Release/lib/liblldb*. inst/lib
+          cp build/Release/bin/liblldb*. inst/bin
+          cp build/Release/bin/libclang.dll. inst/bin
           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
           
