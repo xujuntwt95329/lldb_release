@@ -42,7 +42,7 @@ jobs:
 #         run: |
 #           git clone https://github.com/llvm/llvm-project.git
 #           ls deps/wamr_debug/build-scripts
-          
+
 #       - name: patch llvm
 #         run: |
 #           cd llvm-project
@@ -62,9 +62,9 @@ jobs:
 #           cmake -DCMAKE_INSTALL_PREFIX=../inst -Thost=x64 -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD=X86 ../llvm-project/llvm -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_BUILD_BENCHMARKS:BOOL=OFF -DLLVM_BUILD_DOCS:BOOL=OFF  -DLLVM_BUILD_EXAMPLES:BOOL=OFF  -DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF  -DLLVM_BUILD_TESTS:BOOL=OFF  -DLLVM_ENABLE_BINDINGS:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF  -DLLVM_INCLUDE_DOCS:BOOL=OFF  -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_TESTS:BOOL=OFF
 #           make lldb install -j $(nproc)
 
-#       # @github: can you give me more memory ? 
+#       # @github: can you give me more memory ?
 #       # If you still kill my ld, I'll try over and over again
-      
+
 #       - name: make distribution file
 #         run: |
 #           mkdir -p inst/bin
@@ -74,17 +74,17 @@ jobs:
 #           cp build/lib/liblldb*.so.* inst/lib
 #           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
 #           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
-        
+
 #       - name: upload artifact
 #         uses: actions/upload-artifact@v1
 #         with:
 #           name: ${{ format( 'lldb-{0}', matrix.os) }}
 #           path: inst
-          
+
 #       - name: archive binary
 #         run:
 #           tar czvf lldb-${{ runner.os }}.tar.gz inst
-      
+
 #       - name: Create Release
 #         id: create_release
 #         uses: actions/create-release@v1
@@ -95,7 +95,7 @@ jobs:
 #           release_name: ${{ format( 'lldb-{0}.tar.gz', github.ref) }}
 #           draft: false
 #           prerelease: true
-          
+
 #       - name: Publish Release Attachment
 #         uses: actions/upload-release-asset@v1
 #         env:
@@ -116,7 +116,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-          
+
       - name: Cache libxml2 library
         uses: actions/cache@v2
         id: cache_libxml2
@@ -126,18 +126,18 @@ jobs:
           path: ./libxml2_inst
           key: ${{ runner.os }}-lib-${{env.cache-name}}
           restore-keys: ${{ runner.os }}-lib-${{env.cache-name}}
-      
+
       - name: Download libxml2
         if: steps.cache_libxml2.outputs.cache-hit != 'true'
         run: |
           pwd
           echo "start to download libxml2"
-          git clone https://gitlab.gnome.org/GNOME/libxml2.git
+          git clone --branch v2.10.0 https://gitlab.gnome.org/GNOME/libxml2.git
           echo "configure libxml2 with iconv disabled"
           cd libxml2/win32
           cscript.exe .\configure.js prefix=..\..\libxml2_inst iconv=no
           pwd
-          
+
       - name: Build libxml2
         if: steps.cache_libxml2.outputs.cache-hit != 'true'
         shell: cmd
@@ -164,7 +164,7 @@ jobs:
         run: |
           git clone --branch release/13.x --depth=1 https://github.com/llvm/llvm-project.git
           ls deps/wamr_debug/build-scripts
-          
+
       - name: patch llvm
         if: steps.llvm_src.outputs.cache-hit != 'true'
         run: |
@@ -183,9 +183,9 @@ jobs:
           cd build
           ls ../
           ls ../..
-          cmake -DCMAKE_BUILD_TYPE:STRING="Release" -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD:STRING="X86;WebAssembly" -DLLVM_ENABLE_LIBXML2:BOOL=ON ../llvm-project/llvm -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_BUILD_BENCHMARKS:BOOL=OFF -DLLVM_BUILD_DOCS:BOOL=OFF  -DLLVM_BUILD_EXAMPLES:BOOL=OFF  -DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF  -DLLVM_BUILD_TESTS:BOOL=OFF  -DLLVM_ENABLE_BINDINGS:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF  -DLLVM_INCLUDE_DOCS:BOOL=OFF  -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_TESTS:BOOL=OFF -Thost=x64 -DLLDB_ENABLE_LIBXML2=ON -DLIBXML2_LIBRARY:PATH=D:/a/lldb_release/lldb_release/libxml2_inst/lib/libxml2.lib -DLIBXML2_INCLUDE_DIR:PATH=D:/a/lldb_release/lldb_release/libxml2_inst/include/libxml2
+          cmake -DCMAKE_BUILD_TYPE:STRING="Release" -DLLVM_ENABLE_PROJECTS="clang;lldb" -DLLVM_TARGETS_TO_BUILD:STRING="X86;WebAssembly" -DLLVM_ENABLE_LIBXML2:BOOL=ON -DLLDB_ENABLE_PYTHON=0 ../llvm-project/llvm -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_BUILD_BENCHMARKS:BOOL=OFF -DLLVM_BUILD_DOCS:BOOL=OFF  -DLLVM_BUILD_EXAMPLES:BOOL=OFF  -DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF  -DLLVM_BUILD_TESTS:BOOL=OFF  -DLLVM_ENABLE_BINDINGS:BOOL=OFF  -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF  -DLLVM_INCLUDE_DOCS:BOOL=OFF  -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF  -DLLVM_INCLUDE_TESTS:BOOL=OFF -Thost=x64 -DLLDB_ENABLE_LIBXML2=ON -DLIBXML2_LIBRARY:PATH=D:/a/lldb_release/lldb_release/libxml2_inst/lib/libxml2.lib -DLIBXML2_INCLUDE_DIR:PATH=D:/a/lldb_release/lldb_release/libxml2_inst/include/libxml2
           cmake --build . --config Release --parallel 4
-      
+
       - name: make distribution file
         run: |
           mkdir -p inst/bin
@@ -195,21 +195,51 @@ jobs:
           cp build/Release/bin/libclang.dll. inst/bin
           cp llvm-project/lldb/tools/lldb-vscode/package.json inst
           cp -r llvm-project/lldb/tools/lldb-vscode/syntaxes/ inst
-          
+
 #       - name: archive binary
 #         run:
 #           tar czvf lldb-${{ runner.os }}.tar.gz inst
 #           tar czvf lldb-build-${{ runner.os }}.tar.gz build
-          
+
       - name: upload artifact
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ format( 'lldb-{0}', matrix.os) }}
+          name: ${{ format( 'lldb-{0}', runner.os) }}
           path: inst
-          
+
       - name: upload build folder
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ format( 'lldb-build-{0}', matrix.os) }}
+          name: ${{ format( 'lldb-build-{0}', runner.os) }}
           path: build
-          
+
+      - name: zip files
+        uses: vimtor/action-zip@v1
+        with:
+          files: inst/
+          dest: lldb.zip
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: <rc>
+          release_name: <rc>
+          prerelease: false
+
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./lldb.zip
+          asset_name: lldb.zip
+          asset_content_type: application/zip
+
+      - uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
