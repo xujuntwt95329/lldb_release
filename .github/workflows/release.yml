@@ -145,9 +145,9 @@ jobs:
           cd libxml2/win32
           echo "build libxml2"
           dir "C:\Program Files (x86)\Microsoft Visual Studio"
-          dir "C:\Program Files\Microsoft Visual Studio"
+          dir "C:\Program Files\Microsoft Visual Studio\2022"
           dir "C:\Program Files (x86)\Microsoft Visual Studio\2019"
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           nmake /f Makefile.msvc
           echo "install libxml2"
           nmake /f Makefile.msvc install
